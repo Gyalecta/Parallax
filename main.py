@@ -5,6 +5,8 @@
 import os
 import requests
 from dotenv import load_dotenv
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 load_dotenv()
 api_key = os.getenv("SOLAR_API_KEY")
@@ -25,6 +27,32 @@ def fetch_planet(name):
         return response.json()
     return None
 
+def positions(lon, lat, elev, zone, datetime):
+    if lon is None or lat is None or elev is None or zone is None:
+        return None
+    url = f"https://api.le-systeme-solaire.net/rest/positions"
+    headers = {"Authorization": f"Bearer {api_key}"} if api_key else {}
+    params = {
+        "lon": lon,
+        "lat": lat,
+        "elev": elev,
+        "zone": zone,
+        "datetime": datetime,
+    }
+    response = requests.get(url, headers=headers, params=params, timeout=10)
+
+    if response.status_code == 200:
+        return response.json()
+
+def print_visible(data):
+    if data is None:
+        print("Error in retrieving the positions.")
+        return
+    for body in data["positions"]:
+        alt = body["alt"]
+        if not alt.startswith("-"):
+            print(f"{body['name']}: alt {body['alt']}, az {body['az']}")
+
 
 def print_planet(data):
     if data is not None:
@@ -41,8 +69,8 @@ def show_menu():
     print(f"║ {GREEN}PARALLAX - Astronomy Explorer{RESET}{CYAN}║")
     print(f"╚══════════════════════════════╝{RESET}")
     print("1. Search a planet")
-    print("2. Exit")
-
+    print("2. Visible planets")
+    print("3. Exit")
 
 while True:
     show_menu()
@@ -52,7 +80,16 @@ while True:
         name = input("Enter planet name: ").strip()
         data = fetch_planet(name)
         print_planet(data)
-    elif choice in {"2", "q", "quit"}:
+    elif choice == "2":
+        lat = input("\nInsert your latitude: ").strip()
+        lon = input("\nInsert your longitude: ").strip()
+        elev = input("\nInser your elevation: ").strip()
+        zone = 2
+        now_str = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+        data = positions(lon, lat, elev, zone, now_str)
+        
+        print_visible(data)
+    elif choice in {"3", "q", "quit"}:
         print("\nGoodbye!")
         break
     else:
