@@ -2,7 +2,7 @@
 
 Parallax is a small command-line tool to fetch solar system data and check which planets and celestial bodies are visible from a given location.
 
-![Parallax Demo](demo.gif)
+![Parallax Demo](https://github.com/Gyalecta/Parallax/blob/main/demo.gif)
 
 ## Requirements
 
