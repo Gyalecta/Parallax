@@ -87,6 +87,22 @@ def get_coordinates(place):
     
     return (location.latitude, location.longitude)
 
+def azimuth_to_cardinal(azimuth):
+    """
+    Converts an azimuth angle (in degrees) to a cardinal direction.
+    
+    Args:
+        azimuth: azimuth angle in degrees (0-360).
+    
+    Returns:
+        A string representing the cardinal direction (N, NE, E, SE, S, SW, W, NW).
+    """
+
+    degrees = int(azimuth.split("°")[0])
+    directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"]
+    index = round(degrees / 45) % 8
+    return directions[index]
+
 def print_visible(data):
     """
     Prints the visible bodies from the response of the "positions" function.
@@ -102,8 +118,10 @@ def print_visible(data):
         return
     for body in data["positions"]:
         alt = body["alt"]
+        az = body["az"]
         if not alt.startswith("-"):
-            print(f"{body['name']}: alt {body['alt']}, az {body['az']}")
+            cardinal = azimuth_to_cardinal(az)
+            print(f"{body['name']}: alt {alt}, az {az} ({cardinal})")
 
 
 def print_planet(data):
