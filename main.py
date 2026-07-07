@@ -11,6 +11,7 @@ from geopy.geocoders import Nominatim
 
 load_dotenv()
 api_key = os.getenv("SOLAR_API_KEY")
+default_location = os.getenv("DEFAULT_LOCATION")
 
 RESET = "\033[0m"
 CYAN = "\033[96m"
@@ -162,7 +163,14 @@ while True:
         data = fetch_planet(name)
         print_planet(data)
     elif choice == "2":
-        place = input("\nInsert your location: ").strip()
+        if default_location:
+            user_input = input(f"\nUse default location ({default_location})? (y/n): ").strip().lower()
+            if user_input in {"y", "yes", ""}:
+                place = default_location
+            else:
+                place = input("\nInsert your location: ").strip()
+        else:
+            place = input("\nInsert your location: ").strip()
         location = get_coordinates(place)
         if location is None:
             print("Location not found.")
