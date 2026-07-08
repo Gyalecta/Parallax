@@ -2,6 +2,7 @@
 # Author: Gyalecta (Domenico)
 # Date: 05/07/2026
 
+# Library imports
 import os
 import requests
 from dotenv import load_dotenv
@@ -9,10 +10,12 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 from geopy.geocoders import Nominatim
 
+# Load environment variables
 load_dotenv()
 api_key = os.getenv("SOLAR_API_KEY")
 default_location = os.getenv("DEFAULT_LOCATION")
 
+# Color codes for terminal output
 RESET = "\033[0m"
 CYAN = "\033[96m"
 GREEN = "\033[92m"
